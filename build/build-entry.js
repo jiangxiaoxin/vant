@@ -1,12 +1,17 @@
 const fs = require('fs-extra');
 const glob = require('fast-glob');
 const path = require('path');
+const os = require('os');
 const uppercamelize = require('uppercamelcase');
 const Components = require('./get-components')();
 const version = process.env.VERSION || require('../package.json').version;
 const tips = '// This file is auto gererated by build/build-entry.js';
 const root = path.join(__dirname, '../');
 const join = dir => path.join(root, dir);
+
+function isWin32() {
+  return os.platform() === 'win32';
+}
 
 function buildVantEntry() {
   const uninstallComponents = [
@@ -69,6 +74,7 @@ export default {
 
 // generate webpack entry file for markdown docs
 function buildDocsEntry() {
+  const isWin = isWin32();
   const output = join('docs/src/docs-entry.js');
   const getName = fullPath => fullPath.replace(/\/(en|zh)/, '.$1').split('/').pop().replace('.md', '');
   const docs = glob
@@ -79,7 +85,11 @@ function buildDocsEntry() {
     ])
     .map(fullPath => {
       const name = getName(fullPath);
-      return `'${name}': () => import('${path.relative(join('docs/src'), fullPath)}')`;
+      let relativePath = path.relative(join('docs/src'), fullPath);
+      if (isWin) {
+        relativePath = relativePath.replace(/\\/g, '/');
+      }
+      return `'${name}': () => import('${relativePath}')`;
     });
 
   const content = `${tips}
