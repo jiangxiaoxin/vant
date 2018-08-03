@@ -1,16 +1,18 @@
 <template>
-  <demo-section>
+  <demo-section class="lasy-section">
     <demo-block :title="$t('basicUsage')">
-      <img v-for="img in imageList" v-lazy="img" >
+      <div class="lasy-img-container" v-for="(img, index) in imageList" :key="index">
+        <img alt="图片" v-lazy="img">
+      </div>
     </demo-block>
 
-    <demo-block :title="$t('title2')">
-      <div v-for="img in backgroundImageList" v-lazy:background-image="img" />
+    <demo-block :title="$t('title2')" class="lasy-img-background">
+      <div v-for="(img, index) in backgroundImageList" v-lazy:background-image="img" :key="index" />
     </demo-block>
 
     <demo-block :title="$t('title3')">
-      <lazy-component>
-        <img v-for="img in componentImageList" v-lazy="img" >
+      <lazy-component @show="handleComponentShow">
+        <img v-for="(img, index) in componentImageList" v-lazy="img" :key="index" class='lasy-img-component'>
       </lazy-component>
     </demo-block>
   </demo-section>
@@ -32,10 +34,10 @@ export default {
   data() {
     return {
       imageList: [
-        'https://img.yzcdn.cn/public_files/2017/09/05/3bd347e44233a868c99cf0fe560232be.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/c0dab461920687911536621b345a0bc9.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg'
+        'http://idiy.haier.com/upload/test/76821cf3-459c-48cd-bfb8-1ee9af2178c0.jpg',
+        'http://imcommunity.haier.net/group1/M00/00/03/Cp8lIltWuWuAUIH9AAIA059Pv0g975.jpg',
+        'http://imcommunity.haier.net/group1/M00/00/08/Cp8l5VtWuaCAezu1AABSp06pXxU162.jpg',
+        'https://img.yzcdn.cn/public_files/2017/09/05/c0dab461920687911536621b345a0bc9.jpg'
       ],
       backgroundImageList: [
         'https://img.yzcdn.cn/public_files/2017/09/05/bac1903e863834ace25773f3554b6890.jpg',
@@ -49,8 +51,9 @@ export default {
   },
 
   methods: {
-    handleComponentShow() {
+    handleComponentShow(component) {
       console.log('component show');
+      console.log(component);
     }
   }
 };
@@ -60,8 +63,9 @@ export default {
 .demo-lazyload {
   padding: 0 15px;
 
-  img,
-  div[lazy] {
+  .lasy-img-background.img,
+  .lasy-img-component,
+  .lasy-img-background div[lazy] {
     padding: 15px;
     width: 100%;
     height: 250px;
@@ -78,5 +82,27 @@ export default {
   .van-doc-demo-section__title {
     padding-left: 0;
   }
+}
+
+.lasy-img-container {
+  position: relative;
+  padding-top: 100%;
+  margin-top: 10px;
+  height: 0;
+  display: block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lasy-img-container > img {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>
